@@ -1,2 +1,29 @@
 - name: setup prompt
   ansible.builtin.shell: set-prompt {{ tool_name }}
+
+- name: create github runner user
+  ansible.builtin.user:
+    name: github
+
+- name: create github actions folder
+  ansible.builtin.file:
+    path: /actions-runner
+    group: github
+    state: directory
+    owner: github
+
+- name: download github runner
+  ansible.builtin.unarchive:
+    src: https://github.com/actions/runner/releases/download/v2.325.0/actions-runner-linux-x64-2.325.0.tar.gz
+    dest: /actions-runner
+    group: github
+    owner: github
+    remote_src: yes
+
+#- name: setup runners
+#  ansible.builtin.shell: |
+#    mkdir actions-runner && cd actions-runner
+#    curl -o actions-runner-linux-x64-2.325.0.tar.gz -L https://github.com/actions/runner/releases/download/v2.325.0/actions-runner-linux-x64-2.325.0.tar.gz
+#    echo "5020da7139d85c776059f351e0de8fdec753affc9c558e892472d43ebeb518f4  actions-runner-linux-x64-2.325.0.tar.gz" | shasum -a 256 -c
+#    tar xzf ./actions-runner-linux-x64-2.325.0.tar.gz
+
