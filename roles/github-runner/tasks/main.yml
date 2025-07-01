@@ -12,6 +12,12 @@
     state: directory
     owner: github
 
+
+- name: check already runner configured status
+  ansible.builtin.stat:
+    path: /actions-runner/.runner
+  register: runner-stat
+
 - name: download github runner
   ansible.builtin.unarchive:
     src: https://github.com/actions/runner/releases/download/v2.325.0/actions-runner-linux-x64-2.325.0.tar.gz
@@ -19,6 +25,8 @@
     group: github
     owner: github
     remote_src: yes
+
+
 
 - name: Get secret from vault
   ansible.builtin.debug:
@@ -29,11 +37,6 @@
     name: libicu
     state: installed
 
-- name: Remove existing GitHub runner config if present
-  ansible.builtin.shell: ./config.sh remove --unattended
-  args:
-    chdir: /actions-runner
-  ignore_errors: yes  # in case it hasn't been configured yet
 
 
 - name: configure github runner
@@ -41,9 +44,20 @@
   args:
     chdir: /actions-runner
   become_user: github
+  when: not runner-stat.stat.exists
+
+- name: config service file
+  ansible.builtin.template:
+    src: github-runner.j2
+    dest: /etc/systemd/system/github-runner.service
+
 
 - name: run github runner
-  ansible.builtin.shell: ./run.sh
+  ansible.builtin.systemd_service:
+    name: github-runner
+    state: started
+    enabled: yes
+    daemon-reload: yes
 
 #- name: setup runners
 #  ansible.builtin.shell: |
