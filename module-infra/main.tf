@@ -67,7 +67,7 @@ resource "aws_route53_record" "private" {
 
 
 resource "aws_route53_record" "public" {
-  count   = aws_instance.tool.public_ip != null ? 1 : 0
+  # count   = aws_instance.tool.public_ip != null ? 1 : 0
   zone_id = var.zone_id
   name    = var.name
   type    = "A"
