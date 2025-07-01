@@ -1,2 +1,0 @@
-- name: setup prompt
-  ansible.builtin.shell: set-prompt {{ tool_name }}
