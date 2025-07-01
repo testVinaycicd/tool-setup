@@ -1,7 +1,7 @@
 - name: setup prompt
   ansible.builtin.shell: set-prompt {{ tool_name }}
 
-- name: create github runner user
+- name: create github runner user to the machine
   ansible.builtin.user:
     name: github
 
