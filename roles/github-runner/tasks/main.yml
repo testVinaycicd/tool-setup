@@ -20,6 +20,23 @@
     owner: github
     remote_src: yes
 
+- name: Get secret from vault
+  connection: local
+  hosts: localhost
+  become: true
+  tasks :
+    - name: print
+      ansible.builtin.debug:
+        msg: "{{ lookup('community.hashi_vault.hashi_vault', 'roboshop-{{ env }}/data/{{ component_name }} token={{vault_token}} url=http://vault.mikeydevops1.online:8200/') }}"
+
+
+#- name: configure github runner
+#  ansible.builtin.shell: ./config.sh --url https://github.com/vinaybkrishna307/tool-setup --token "{{ lookup('community.hashi_vault.hashi_vault', 'roboshop-{{ env }}/data/{{ component_name }} token={{vault_token}} url=http://vault.mikeydevops1.online:8200/') }}"
+#  args:
+#    chdir: /actions-runner
+#  become_user: github
+
+
 #- name: setup runners
 #  ansible.builtin.shell: |
 #    mkdir actions-runner && cd actions-runner
