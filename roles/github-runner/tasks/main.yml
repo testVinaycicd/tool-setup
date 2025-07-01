@@ -9,7 +9,7 @@
   ansible.builtin.file:
     path: /actions-runner
     group: github
-    state: directory
+
     owner: github
 
 - name: download github runner
