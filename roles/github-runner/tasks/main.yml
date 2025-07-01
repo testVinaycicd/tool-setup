@@ -29,6 +29,12 @@
     name: libicu
     state: installed
 
+- name: Remove existing GitHub runner config if present
+  ansible.builtin.shell: ./config.sh remove --unattended
+  args:
+    chdir: /actions-runner
+  ignore_errors: yes  # in case it hasn't been configured yet
+
 
 - name: configure github runner
   ansible.builtin.shell: ./config.sh --url https://github.com/vinaybkrishna307/tool-setup --token "{{ lookup('community.hashi_vault.hashi_vault', 'secret=infra/data/github-runner:RUNNER_TOKEN token={{vault_token}} url=http://vault.mikeydevops1.online:8200/') }}" --unattended
