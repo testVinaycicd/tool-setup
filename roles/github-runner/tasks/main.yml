@@ -62,7 +62,7 @@
 - name: copy hashicorp repo file
   ansible.builtin.template:
     src: hashicorp.repo
-    dest: /ect/yum.repo.d/hashicorp.repo
+    dest: /etc/yum.repo.d/hashicorp.repo
 
 - name: install terraform
   ansible.builtin.dnf:
