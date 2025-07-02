@@ -69,4 +69,3 @@
     name: terraform
     state: installed
 
-- name: Install terraform
