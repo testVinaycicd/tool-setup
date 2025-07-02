@@ -59,10 +59,14 @@
     enabled: yes
     daemon-reload: yes
 
-#- name: setup runners
-#  ansible.builtin.shell: |
-#    mkdir actions-runner && cd actions-runner
-#    curl -o actions-runner-linux-x64-2.325.0.tar.gz -L https://github.com/actions/runner/releases/download/v2.325.0/actions-runner-linux-x64-2.325.0.tar.gz
-#    echo "5020da7139d85c776059f351e0de8fdec753affc9c558e892472d43ebeb518f4  actions-runner-linux-x64-2.325.0.tar.gz" | shasum -a 256 -c
-#    tar xzf ./actions-runner-linux-x64-2.325.0.tar.gz
+- name: copy hashicorp repo file
+  ansible.builtin.template:
+    src: hashicorp.repo
+    dest: /ect/yum.repo.d/hashicorp.repo
 
+- name: install terraform
+  ansible.builtin.dnf:
+    name: terraform
+    state: installed
+
+- name: Install terraform
