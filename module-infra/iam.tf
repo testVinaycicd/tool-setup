@@ -26,3 +26,19 @@ resource "aws_iam_instance_profile" "main" {
   name = "${ var.name }-role"
   role = aws_iam_role.main.name
 }
+
+resource "aws_iam_policy" "policy" {
+  name = "${ var.name }-role-policy"
+  path = "/"
+  description = "policy for github-runner"
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action   = local.policy_action
+        Effect   = "Allow"
+        Resource = length(var.iam_policy["Resource"]) == 0 ? ["*"] : var.iam_policy["Resource"]
+      },
+    ]
+  })
+}

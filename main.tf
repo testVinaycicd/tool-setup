@@ -18,16 +18,24 @@ variable "zone_id" {
   default = "Z09180393TY9K7UQDKE5E"
 }
 
+
 variable "tools" {
   default = {
     vault = {
       instance_type = "t3.small"
       port = 8200
+      iam_policy = {
+        Action = []
+        Resource = []
+      }
     }
     github-runner = {
       instance_type = "t3.small"
       port = 443 #dummy port
-
+      iam_policy = {
+        Action = []
+        Resource = []
+      }
     }
   }
 }
@@ -42,6 +50,6 @@ module "tool-infra" {
   name = each.key
   port = each.value["port"]
   zone_id = var.zone_id
-
+  iam_policy = each.value["iam_policy"]
 
 }
