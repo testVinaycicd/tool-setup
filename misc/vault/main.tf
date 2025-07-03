@@ -12,6 +12,10 @@ terraform {
   }
 }
 
+variable "vault_token" {
+  description = "Token used to authenticate with HashiCorp Vault"
+  type        = string
+}
 
 provider "vault" {
   address = "http://vault.mikeydevops1.online:8200/"
