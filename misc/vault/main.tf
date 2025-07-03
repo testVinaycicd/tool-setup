@@ -16,12 +16,12 @@ terraform {
 
 provider "vault" {
   address = "http://vault.mikeydevops1.online:8200/"
-  token = var.token
+  token = var.vault_token
 }
 
 
 
-variable "token" {
+variable "vault_token" {
   default = ""
 }
 
@@ -32,7 +32,7 @@ resource "vault_mount" "ssh" {
   description = "ssh vault_mount"
 }
 
-resource "vault_generic_secret" "example" {
+resource "vault_generic_secret" "ssh" {
   path = "${vault_mount.ssh.path}/ssh"
   data_json = <<EOT
 {
