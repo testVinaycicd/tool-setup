@@ -33,11 +33,11 @@ resource "vault_mount" "ssh" {
 
 resource "vault_generic_secret" "example" {
   path = "${vault_mount.ssh.path}/ssh"
-
   data_json = <<EOT
 {
   "username":   "ec2-user",
-  "password": "DevOps321"
+  "password":   "DevOps321",
+  "pa"      :   "none"
 }
 EOT
 }
