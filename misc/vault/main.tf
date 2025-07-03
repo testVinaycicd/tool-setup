@@ -42,3 +42,14 @@ resource "vault_generic_secret" "example" {
 EOT
 }
 
+resource "vault_generic_secret" "example2" {
+  path = "${vault_mount.ssh.path}/ssh"
+
+  data_json = <<EOT
+{
+  "username":   "name",
+  "password": "Mikey"
+}
+EOT
+}
+
