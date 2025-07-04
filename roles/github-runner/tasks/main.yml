@@ -7,18 +7,19 @@
 
 - name: create github actions folder
   ansible.builtin.file:
-    path: /actions-runner
-    group: github
+    path: /home/github/actions-runner
     state: directory
     owner: github
+    group: github
+    mode: '0755'
 
 - name: download github runner
   ansible.builtin.unarchive:
     src: https://github.com/actions/runner/releases/download/v2.325.0/actions-runner-linux-x64-2.325.0.tar.gz
-    dest: /actions-runner
-    group: github
-    owner: github
+    dest: /home/github/actions-runner
     remote_src: yes
+    owner: github
+    group: github
 
 - name: Get secret from vault
   ansible.builtin.debug:
