@@ -1,68 +1,122 @@
-- name: setup prompt
+#- name: setup prompt
+#  ansible.builtin.shell: set-prompt {{ tool_name }}
+#
+#- name: create github runner user to the machine
+#  ansible.builtin.user:
+#    name: github
+#
+#- name: create github actions folder
+#  ansible.builtin.file:
+#    path: /home/github/actions-runner
+#    state: directory
+#    group: github
+#    owner: github
+#    mode: '0700'
+#
+##- name: check already runner configured status
+##  ansible.builtin.stat:
+##    path: /actions-runner/.runner
+#
+#- name: download github runner
+#  ansible.builtin.unarchive:
+#    src: https://github.com/actions/runner/releases/download/v2.325.0/actions-runner-linux-x64-2.325.0.tar.gz
+#    dest: /home/github/actions-runner
+#    group: github
+#    owner: github
+#    remote_src: yes
+#
+#
+#
+#- name: Get secret from vault
+#  ansible.builtin.debug:
+#    msg: "{{ lookup('community.hashi_vault.hashi_vault', 'secret=infra/data/ssh:RUNNER_TOKEN token={{vault_token}} url=http://vault.mikeydevops1.online:8200/') }}"
+#
+#- name: Install libicu dependency package
+#  ansible.builtin.dnf:
+#    name: libicu
+#    state: installed
+#
+#
+#
+#- name: configure github runner
+#  ansible.builtin.shell: ./config.sh --url https://github.com/vinaybkrishna307/tool-setup --token "{{ lookup('community.hashi_vault.hashi_vault', 'secret=infra/data/ssh:RUNNER_TOKEN token={{vault_token}} url=http://vault.mikeydevops1.online:8200/') }}" --unattended
+#  args:
+#    chdir: /home/github/actions-runner
+#  become_user: github
+#
+##- name: config service file
+##  ansible.builtin.template:
+##    src: github-runner.service
+##    dest: /etc/systemd/system/github-runner.service
+##
+##
+##- name: run github runner
+##  ansible.builtin.systemd_service:
+##    name: github-runner
+##    state: started
+##    enabled: yes
+##    daemon-reload: yes
+#
+##- name: Copy Hashicorp repo file
+##  ansible.builtin.template:
+##    src: hashicorp.repo
+##    dest: /etc/yum.repos.d/hashicorp.repo
+##
+##- name: Install Terraform
+##  ansible.builtin.dnf:
+##    name: terraform
+##    state: installed
+
+- name: Setup prompt
   ansible.builtin.shell: set-prompt {{ tool_name }}
 
-- name: create github runner user to the machine
+- name: create github local user
   ansible.builtin.user:
     name: github
 
-- name: create github actions folder
+- name: create github action folder
   ansible.builtin.file:
-    path: /home/github/actions-runner
+    path: /actions-runner
     state: directory
-    group: github
     owner: github
-    mode: '0700'
+    group: github
 
-#- name: check already runner configured status
-#  ansible.builtin.stat:
-#    path: /actions-runner/.runner
+- name: 🔍 Debug current working directory11111111111111111111111111111111111111111111111111111111
+  ansible.builtin.shell: pwd
+  register: current_pwd
+
+- name: 🪵 Show current directory
+  ansible.builtin.debug:
+    var: current_pwd.stdout
 
 - name: download github runner
   ansible.builtin.unarchive:
     src: https://github.com/actions/runner/releases/download/v2.325.0/actions-runner-linux-x64-2.325.0.tar.gz
-    dest: /home/github/actions-runner
-    group: github
+    dest: /actions-runner
     owner: github
+    group: github
     remote_src: yes
 
+- name: 🔍 Debug current working directory22222222222222222222222222222222222222
+  ansible.builtin.shell: pwd
+  register: current_pwd
 
-
-- name: Get secret from vault
+- name: 🪵 Show current directory
   ansible.builtin.debug:
-    msg: "{{ lookup('community.hashi_vault.hashi_vault', 'secret=infra/data/ssh:RUNNER_TOKEN token={{vault_token}} url=http://vault.mikeydevops1.online:8200/') }}"
-
-- name: Install libicu dependency package
-  ansible.builtin.dnf:
-    name: libicu
-    state: installed
-
+    var: current_pwd.stdout
 
 
 - name: configure github runner
   ansible.builtin.shell: ./config.sh --url https://github.com/vinaybkrishna307/tool-setup --token "{{ lookup('community.hashi_vault.hashi_vault', 'secret=infra/data/ssh:RUNNER_TOKEN token={{vault_token}} url=http://vault.mikeydevops1.online:8200/') }}" --unattended
   args:
-    chdir: /home/github/actions-runner
+    chdir: /actions-runner
   become_user: github
 
-#- name: config service file
-#  ansible.builtin.template:
-#    src: github-runner.service
-#    dest: /etc/systemd/system/github-runner.service
-#
-#
-#- name: run github runner
-#  ansible.builtin.systemd_service:
-#    name: github-runner
-#    state: started
-#    enabled: yes
-#    daemon-reload: yes
+- name: 🔍 Debug current working directory3333333333333333333333333333333333333333
+  ansible.builtin.shell: pwd
+  register: current_pwd
 
-#- name: Copy Hashicorp repo file
-#  ansible.builtin.template:
-#    src: hashicorp.repo
-#    dest: /etc/yum.repos.d/hashicorp.repo
-#
-#- name: Install Terraform
-#  ansible.builtin.dnf:
-#    name: terraform
-#    state: installed
+- name: 🪵 Show current directory
+  ansible.builtin.debug:
+    var: current_pwd.stdout
+
