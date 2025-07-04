@@ -12,12 +12,6 @@
     state: directory
     owner: github
 
-
-- name: check already runner configured status
-  ansible.builtin.stat:
-    path: /actions-runner/.runner
-  register: runner_stat
-
 - name: download github runner
   ansible.builtin.unarchive:
     src: https://github.com/actions/runner/releases/download/v2.325.0/actions-runner-linux-x64-2.325.0.tar.gz
@@ -25,8 +19,6 @@
     group: github
     owner: github
     remote_src: yes
-
-
 
 - name: Get secret from vault
   ansible.builtin.debug:
@@ -37,7 +29,10 @@
     name: libicu
     state: installed
 
-
+- name: check already runner configured status
+  ansible.builtin.stat:
+    path: /actions-runner/.runner
+  register: runner_stat
 
 - name: configure github runner
   ansible.builtin.shell: ./config.sh --url https://github.com/vinaybkrishna307/tool-setup --token "{{ lookup('community.hashi_vault.hashi_vault', 'secret=infra/data/ssh:RUNNER_TOKEN token={{vault_token}} url=http://vault.mikeydevops1.online:8200/') }}" --unattended
@@ -48,7 +43,7 @@
 
 - name: config service file
   ansible.builtin.template:
-    src: github-runner.j2
+    src: github-runner.service
     dest: /etc/systemd/system/github-runner.service
 
 
