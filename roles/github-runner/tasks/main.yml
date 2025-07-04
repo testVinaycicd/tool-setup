@@ -12,6 +12,12 @@
     state: directory
     owner: github
 
+
+- name: check already runner configured status
+  ansible.builtin.stat:
+    path: /actions-runner/.runner
+  register: runner_stat
+
 - name: download github runner
   ansible.builtin.unarchive:
     src: https://github.com/actions/runner/releases/download/v2.325.0/actions-runner-linux-x64-2.325.0.tar.gz
@@ -19,6 +25,8 @@
     group: github
     owner: github
     remote_src: yes
+
+
 
 - name: Get secret from vault
   ansible.builtin.debug:
@@ -40,7 +48,7 @@
 
 - name: config service file
   ansible.builtin.template:
-    src: github-runner.service
+    src: github-runner.j2
     dest: /etc/systemd/system/github-runner.service
 
 
