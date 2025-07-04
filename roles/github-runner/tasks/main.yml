@@ -127,12 +127,12 @@
   become_user: github  # Commented out so dependencies install properly
   when: not runner_stat.stat.exists
 
-- name: config service file
+- name: copy service file
   ansible.builtin.template:
     src: github-runner.service
     dest: /etc/systemd/system/github-runner.service
 
-- name: run github runner
+- name: Start github runner service
   ansible.builtin.systemd_service:
     name: github-runner
     state: started
