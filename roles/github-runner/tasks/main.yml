@@ -12,6 +12,10 @@
     state: directory
     owner: github
 
+- name: Get secret from vault
+  ansible.builtin.debug:
+    msg: " echo PWD "
+
 
 - name: check already runner configured status
   ansible.builtin.stat:
@@ -44,7 +48,7 @@
   args:
     chdir: /actions-runner
   become_user: github
-#  when: not runner_stat.stat.exists
+  when: not runner_stat.stat.exists
 
 - name: config service file
   ansible.builtin.template:
