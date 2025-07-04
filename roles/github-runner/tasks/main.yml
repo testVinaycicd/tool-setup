@@ -138,3 +138,13 @@
     state: started
     enabled: yes
     daemon-reload: yes
+
+
+
+- name: 🔍 PWD after download
+  ansible.builtin.shell: pwd
+  register: current_pwd_after_download
+
+- name: 🪵 Show current directory after download
+  ansible.builtin.debug:
+    var: current_pwd_after_download.stdout
