@@ -19,7 +19,7 @@
 - name: download github runner
   ansible.builtin.unarchive:
     src: https://github.com/actions/runner/releases/download/v2.325.0/actions-runner-linux-x64-2.325.0.tar.gz
-    dest: /actions-runner
+    dest: /home/github/actions-runner
     group: github
     owner: github
     remote_src: yes
