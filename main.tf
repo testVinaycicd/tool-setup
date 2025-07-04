@@ -29,14 +29,14 @@ variable "tools" {
         Resource = []
       }
     }
-    # github-runner = {
-    #   instance_type = "t3.small"
-    #   port = 443 #dummy port
-    #   iam_policy = {
-    #     Action = ["*"]
-    #     Resource = []
-    #   }
-    # }
+    github-runner = {
+      instance_type = "t3.small"
+      port = 443 #dummy port
+      iam_policy = {
+        Action = ["*"]
+        Resource = []
+      }
+    }
   }
 }
 
