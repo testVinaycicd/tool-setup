@@ -7,7 +7,7 @@
 
 - name: create github actions folder
   ansible.builtin.file:
-    path: /actions-runner
+    path: /home/github/actions-runner
     state: directory
     group: github
     owner: github
