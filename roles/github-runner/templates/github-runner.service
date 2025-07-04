@@ -3,12 +3,13 @@ Description=GitHub Actions Runner
 After=network.target
 
 [Service]
-ExecStart=/home/github/actions-runner/runsvc.sh
+ExecStart=/actions-runner/runsvc.sh
 User=github
-WorkingDirectory=/home/github/actions-runner
+WorkingDirectory=/actions-runner
 KillMode=process
 KillSignal=SIGTERM
 TimeoutStopSec=5min
 
 [Install]
 WantedBy=multi-user.target
+
