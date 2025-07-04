@@ -8,19 +8,13 @@
 - name: create github actions folder
   ansible.builtin.file:
     path: /actions-runner
-    group: github
     state: directory
+    group: github
     owner: github
 
-- name: Get secret from vault
-  ansible.builtin.shell: echo pwd
-
-
-
-- name: check already runner configured status
-  ansible.builtin.stat:
-    path: /actions-runner/.runner
-  register: runner_stat
+#- name: check already runner configured status
+#  ansible.builtin.stat:
+#    path: /actions-runner/.runner
 
 - name: download github runner
   ansible.builtin.unarchive:
@@ -48,20 +42,19 @@
   args:
     chdir: /actions-runner
   become_user: github
-  when: not runner_stat.stat.exists
 
-- name: config service file
-  ansible.builtin.template:
-    src: github-runner.service
-    dest: /etc/systemd/system/github-runner.service
-
-
-- name: run github runner
-  ansible.builtin.systemd_service:
-    name: github-runner
-    state: started
-    enabled: yes
-    daemon-reload: yes
+#- name: config service file
+#  ansible.builtin.template:
+#    src: github-runner.service
+#    dest: /etc/systemd/system/github-runner.service
+#
+#
+#- name: run github runner
+#  ansible.builtin.systemd_service:
+#    name: github-runner
+#    state: started
+#    enabled: yes
+#    daemon-reload: yes
 
 #- name: Copy Hashicorp repo file
 #  ansible.builtin.template:
