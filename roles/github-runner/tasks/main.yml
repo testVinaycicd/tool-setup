@@ -39,7 +39,7 @@
 #
 #
 #- name: configure github runner
-#  ansible.builtin.shell: ./config.sh --url https://github.com/vinaybkrishna307/tool-setup --token "{{ lookup('community.hashi_vault.hashi_vault', 'secret=infra/data/ssh:RUNNER_TOKEN token={{vault_token}} url=http://vault.mikeydevops1.online:8200/') }}" --unattended
+#  ansible.builtin.shell: ./config.sh --url https://github.com/testVinaycicd --token --token "{{ lookup('community.hashi_vault.hashi_vault', 'secret=infra/data/ssh:RUNNER_TOKEN token={{vault_token}} url=http://vault.mikeydevops1.online:8200/') }}" --unattended
 #  args:
 #    chdir: /home/github/actions-runner
 #  become_user: github
@@ -81,6 +81,12 @@
     owner: github
     group: github
 
+- name: Check already runner configured status
+  ansible.builtin.stat:
+    path: /actions-runner/.runner
+  register: runner_stat
+
+
 # ----------- PWD Check 1 -----------
 - name: 🔍 PWD before download
   ansible.builtin.shell: pwd
@@ -119,13 +125,16 @@
   args:
     chdir: /actions-runner
   become_user: github  # Commented out so dependencies install properly
+  when: not runner_stat.stat.exists
 
-# ----------- PWD Check 3 -----------
-- name: 🔍 PWD after config
-  ansible.builtin.shell: pwd
-  register: current_pwd_after_config
+- name: config service file
+  ansible.builtin.template:
+    src: github-runner.service
+    dest: /etc/systemd/system/github-runner.service
 
-- name: 🪵 Show current directory after config
-  ansible.builtin.debug:
-    var: current_pwd_after_config.stdout
-
+- name: run github runner
+  ansible.builtin.systemd_service:
+    name: github-runner
+    state: started
+    enabled: yes
+    daemon-reload: yes
