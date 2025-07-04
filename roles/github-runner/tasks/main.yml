@@ -13,8 +13,8 @@
     owner: github
 
 - name: Get secret from vault
-  ansible.builtin.debug:
-    msg: " echo PWD "
+  ansible.builtin.shell: echo pwd
+
 
 
 - name: check already runner configured status
