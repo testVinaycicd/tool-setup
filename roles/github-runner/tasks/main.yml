@@ -70,26 +70,28 @@
 - name: Setup prompt
   ansible.builtin.shell: set-prompt {{ tool_name }}
 
-- name: create github local user
+- name: Create github local user
   ansible.builtin.user:
     name: github
 
-- name: create github action folder
+- name: Create GitHub Actions folder
   ansible.builtin.file:
     path: /actions-runner
     state: directory
     owner: github
     group: github
 
-- name: 🔍 Debug current working directory11111111111111111111111111111111111111111111111111111111
+# ----------- PWD Check 1 -----------
+- name: 🔍 PWD before download
   ansible.builtin.shell: pwd
-  register: current_pwd
+  register: current_pwd_before_download
 
-- name: 🪵 Show current directory
+- name: 🪵 Show current directory before download
   ansible.builtin.debug:
-    var: current_pwd.stdout
+    var: current_pwd_before_download.stdout
 
-- name: download github runner
+# ----------- Download Runner -----------
+- name: Download GitHub runner
   ansible.builtin.unarchive:
     src: https://github.com/actions/runner/releases/download/v2.325.0/actions-runner-linux-x64-2.325.0.tar.gz
     dest: /actions-runner
@@ -97,26 +99,33 @@
     group: github
     remote_src: yes
 
-- name: 🔍 Debug current working directory22222222222222222222222222222222222222
+# ----------- PWD Check 2 -----------
+- name: 🔍 PWD after download
   ansible.builtin.shell: pwd
-  register: current_pwd
+  register: current_pwd_after_download
 
-- name: 🪵 Show current directory
+- name: 🪵 Show current directory after download
   ansible.builtin.debug:
-    var: current_pwd.stdout
+    var: current_pwd_after_download.stdout
 
+- name: Install libicu dependency package
+  ansible.builtin.dnf:
+    name: libicu
+    state: installed
 
-- name: configure github runner
-  ansible.builtin.shell: ./config.sh --url https://github.com/vinaybkrishna307/tool-setup --token "{{ lookup('community.hashi_vault.hashi_vault', 'secret=infra/data/ssh:RUNNER_TOKEN token={{vault_token}} url=http://vault.mikeydevops1.online:8200/') }}" --unattended
+# ----------- Configure GitHub Runner -----------
+- name: Configure GitHub runner (as root so dependencies work)
+  ansible.builtin.shell: ./config.sh --url https://github.com/vinaybkrishna307/tool-setup --token "{{ lookup('community.hashi_vault.hashi_vault', 'secret=infra/data/ssh:RUNNER_TOKEN token={{ vault_token }} url=http://vault.mikeydevops1.online:8200/') }}" --unattended
   args:
     chdir: /actions-runner
-  become_user: github
+  # become_user: github  # Commented out so dependencies install properly
 
-- name: 🔍 Debug current working directory3333333333333333333333333333333333333333
+# ----------- PWD Check 3 -----------
+- name: 🔍 PWD after config
   ansible.builtin.shell: pwd
-  register: current_pwd
+  register: current_pwd_after_config
 
-- name: 🪵 Show current directory
+- name: 🪵 Show current directory after config
   ansible.builtin.debug:
-    var: current_pwd.stdout
+    var: current_pwd_after_config.stdout
 
