@@ -153,7 +153,7 @@
   ansible.builtin.command: whoami
   register: current_user
 
-- name: 🪵 Show current directory after download
+- name: 🪵 Show current directory after downloadsss
   ansible.builtin.debug:
     var: current_user.stdout
 
