@@ -48,7 +48,7 @@
 
 - name: config service file
   ansible.builtin.template:
-    src: github-runner.j2
+    src: github-runner.service
     dest: /etc/systemd/system/github-runner.service
 
 
