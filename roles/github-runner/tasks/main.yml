@@ -81,10 +81,10 @@
     owner: github
     group: github
 
-#- name: Check already runner configured status
-#  ansible.builtin.stat:
-#    path: /actions-runner/.runner
-#  register: runner_stat
+- name: Check already runner configured status
+  ansible.builtin.stat:
+    path: /actions-runner/.runner
+  register: runner_stat
 
 
 - name: Download GitHub runner
@@ -105,19 +105,19 @@
   args:
     chdir: /actions-runner
   become_user: github  # Commented out so dependencies install properly
-#  when: not runner_stat.stat.exists
+  when: not runner_stat.stat.exists
 
-#- name: copy service file
-#  ansible.builtin.template:
-#    src: github-runner.service
-#    dest: /etc/systemd/system/github-runner.service
+- name: copy service file
+  ansible.builtin.template:
+    src: github-runner.service
+    dest: /etc/systemd/system/github-runner.service
 
-#- name: Start github runner service
-#  ansible.builtin.systemd_service:
-#    name: github-runner
-#    state: started
-#    enabled: yes
-#    daemon-reload: yes
+- name: Start github runner service
+  ansible.builtin.systemd_service:
+    name: github-runner
+    state: started
+    enabled: yes
+    daemon-reload: yes
 #
 #
 #
