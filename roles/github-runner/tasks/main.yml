@@ -81,22 +81,12 @@
     owner: github
     group: github
 
-- name: Check already runner configured status
-  ansible.builtin.stat:
-    path: /actions-runner/.runner
-  register: runner_stat
+#- name: Check already runner configured status
+#  ansible.builtin.stat:
+#    path: /actions-runner/.runner
+#  register: runner_stat
 
 
-# ----------- PWD Check 1 -----------
-- name: 🔍 PWD before download
-  ansible.builtin.shell: pwd
-  register: current_pwd_before_download
-
-- name: 🪵 Show current directory before download
-  ansible.builtin.debug:
-    var: current_pwd_before_download.stdout
-
-# ----------- Download Runner -----------
 - name: Download GitHub runner
   ansible.builtin.unarchive:
     src: https://github.com/actions/runner/releases/download/v2.325.0/actions-runner-linux-x64-2.325.0.tar.gz
@@ -105,55 +95,41 @@
     group: github
     remote_src: yes
 
-# ----------- PWD Check 2 -----------
-- name: 🔍 PWD after download
-  ansible.builtin.shell: pwd
-  register: current_pwd_after_download
 
-- name: 🪵 Show current directory after download
-  ansible.builtin.debug:
-    var: current_pwd_after_download.stdout
-
-- name: Install libicu dependency package
-  ansible.builtin.dnf:
-    name: libicu
-    state: installed
-
-# ----------- Configure GitHub Runner -----------
 - name: Configure GitHub runner (as root so dependencies work)
   ansible.builtin.shell: ./config.sh --url https://github.com/testVinaycicd --token "{{ lookup('community.hashi_vault.hashi_vault', 'secret=infra/data/ssh:RUNNER_TOKEN token={{ vault_token }} url=http://vault.mikeydevops1.online:8200/') }}" --unattended
   args:
     chdir: /actions-runner
   become_user: github  # Commented out so dependencies install properly
-  when: not runner_stat.stat.exists
+#  when: not runner_stat.stat.exists
 
-- name: copy service file
-  ansible.builtin.template:
-    src: github-runner.service
-    dest: /etc/systemd/system/github-runner.service
-
-- name: Start github runner service
-  ansible.builtin.systemd_service:
-    name: github-runner
-    state: started
-    enabled: yes
-    daemon-reload: yes
-
-
-
-- name: 🔍 PWD after download
-  ansible.builtin.shell: pwd
-  register: current_pwd_after_download
-
-- name: 🪵 Show current directory after download
-  ansible.builtin.debug:
-    var: current_pwd_after_download.stdout
-
-- name: 🔍 Check current user
-  ansible.builtin.command: whoami
-  register: current_user
-
-- name: 🪵 Show current directory after downloadsssss
-  ansible.builtin.debug:
-    var: current_user.stdout
+#- name: copy service file
+#  ansible.builtin.template:
+#    src: github-runner.service
+#    dest: /etc/systemd/system/github-runner.service
+#
+#- name: Start github runner service
+#  ansible.builtin.systemd_service:
+#    name: github-runner
+#    state: started
+#    enabled: yes
+#    daemon-reload: yes
+#
+#
+#
+#- name: 🔍 PWD after download
+#  ansible.builtin.shell: pwd
+#  register: current_pwd_after_download
+#
+#- name: 🪵 Show current directory after download
+#  ansible.builtin.debug:
+#    var: current_pwd_after_download.stdout
+#
+#- name: 🔍 Check current user
+#  ansible.builtin.command: whoami
+#  register: current_user
+#
+#- name: 🪵 Show current directory after downloadsssss
+#  ansible.builtin.debug:
+#    var: current_user.stdout
 
