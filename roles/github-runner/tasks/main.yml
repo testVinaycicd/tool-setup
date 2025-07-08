@@ -128,22 +128,15 @@
     state: started
     enabled: yes
     daemon-reload: yes
-#
-#
-#
-#- name: 🔍 PWD after download
-#  ansible.builtin.shell: pwd
-#  register: current_pwd_after_download
-#
-#- name: 🪵 Show current directory after download
-#  ansible.builtin.debug:
-#    var: current_pwd_after_download.stdout
-#
-#- name: 🔍 Check current user
-#  ansible.builtin.command: whoami
-#  register: current_user
-#
-#- name: 🪵 Show current directory after downloadsssss
-#  ansible.builtin.debug:
-#    var: current_user.stdout
+
+- name: Copy Hashicorp repo file
+  ansible.builtin.template:
+    src: hashicorp.repo
+    dest: /etc/yum.repos.d/hashicorp.repo
+
+- name: Install Terraform
+  ansible.builtin.dnf:
+    name: terraform
+    state: installed
+
 
