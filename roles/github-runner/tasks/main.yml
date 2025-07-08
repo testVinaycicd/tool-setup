@@ -67,22 +67,20 @@
 ##    name: terraform
 ##    state: installed
 
+
+
+
 - name: Setup prompt
   ansible.builtin.shell: set-prompt {{ tool_name }}
-
-- name: Get secret from vault
-  ansible.builtin.debug:
-    msg: "{{ lookup('community.hashi_vault.hashi_vault', 'secret=infra/data/ssh:username token=' ~ vault_token ~ ' url=http://vault.mikeydevops1.online:8200/ namespace=') }}"
-
-
-- name: Get secret from vault
-  ansible.builtin.debug:
-    msg: "{{ lookup('community.hashi_vault.hashi_vault', 'secret=infra/data/ssh:RUNNER_TOKEN token={{vault_token}} url=http://vault.mikeydevops1.online:8200/') }}"
-
 
 - name: Create github local user
   ansible.builtin.user:
     name: github
+
+- name: Check already runner configured status
+  ansible.builtin.stat:
+    path: /actions-runner/.runner
+  register: runner_stat
 
 - name: Create GitHub Actions folder
   ansible.builtin.file:
@@ -91,43 +89,40 @@
     owner: github
     group: github
 
-- name: Check already runner configured status
-  ansible.builtin.stat:
-    path: /actions-runner/.runner
-  register: runner_stat
-
-
-- name: Download GitHub runner
-  ansible.builtin.unarchive:
-    src: https://github.com/actions/runner/releases/download/v2.325.0/actions-runner-linux-x64-2.325.0.tar.gz
-    dest: /actions-runner
-    owner: github
-    group: github
-    remote_src: yes
-
-- name: Install libicu dependency package
-  ansible.builtin.dnf:
-    name: libicu
-    state: installed
-
-- name: Configure GitHub runner (as root so dependencies work)
-  ansible.builtin.shell: ./config.sh --url https://github.com/testVinaycicd --token "{{ lookup('community.hashi_vault.hashi_vault', 'secret=infra/data/ssh:RUNNER_TOKEN token={{ vault_token }} url=http://vault.mikeydevops1.online:8200/') }}" --unattended
-  args:
-    chdir: /actions-runner
-  become_user: github  # Commented out so dependencies install properly
+- name: github action setup
   when: not runner_stat.stat.exists
+  block:
+    - name: Download GitHub runner
+      ansible.builtin.unarchive:
+        src: https://github.com/actions/runner/releases/download/v2.325.0/actions-runner-linux-x64-2.325.0.tar.gz
+        dest: /actions-runner
+        owner: github
+        group: github
+        remote_src: yes
 
-- name: copy service file
-  ansible.builtin.template:
-    src: github-runner.service
-    dest: /etc/systemd/system/github-runner.service
+    - name: Install libicu dependency package
+      ansible.builtin.dnf:
+        name: libicu
+        state: installed
 
-- name: Start github runner service
-  ansible.builtin.systemd_service:
-    name: github-runner
-    state: started
-    enabled: yes
-    daemon-reload: yes
+    - name: Configure GitHub runner (as root so dependencies work)
+      ansible.builtin.shell: ./config.sh --url https://github.com/testVinaycicd --token "{{ lookup('community.hashi_vault.hashi_vault', 'secret=infra/data/ssh:RUNNER_TOKEN token={{ vault_token }} url=http://vault.mikeydevops1.online:8200/') }}" --unattended
+      args:
+        chdir: /actions-runner
+      become_user: github  # Commented out so dependencies install properly
+
+    - name: copy service file
+      ansible.builtin.template:
+        src: github-runner.service
+        dest: /etc/systemd/system/github-runner.service
+
+    - name: Start github runner service
+      ansible.builtin.systemd_service:
+        name: github-runner
+        state: started
+        enabled: yes
+        daemon-reload: yes
+
 
 - name: Copy Hashicorp repo file
   ansible.builtin.template:
