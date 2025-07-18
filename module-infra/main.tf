@@ -51,6 +51,10 @@ resource "aws_instance" "tool" {
     }
   }
 
+  root_block_device {
+    volume_size = var.root_block_device
+  }
+
   tags = {
     Name = " ${ var.name }-terraform "
   }
