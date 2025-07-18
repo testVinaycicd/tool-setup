@@ -30,7 +30,8 @@ resource "aws_iam_instance_profile" "main" {
 resource "aws_iam_policy" "policy" {
   name = "${ var.name }-role-policy"
   path = "/"
-  description = "policy for github-runner"
+  description = "${ var.name }-role-policy"
+
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
