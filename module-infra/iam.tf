@@ -36,9 +36,9 @@ resource "aws_iam_policy" "policy" {
     Version = "2012-10-17"
     Statement = [
       {
-        Action   = local.policy_action
+        Action   = ["account:ListRegions", "*"]
         Effect   = "Allow"
-        Resource = length(var.iam_policy["Resource"]) == 0 ? ["*"] : var.iam_policy["Resource"]
+        Resource = ["*"]
       },
     ]
   })
