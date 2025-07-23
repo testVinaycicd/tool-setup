@@ -22,6 +22,11 @@
     owner: github
     group: github
 
+- name: Install libicu dependency package
+  ansible.builtin.dnf:
+    name: libicu
+    state: installed
+
 - name: github action setup
   when: not runner_stat.stat.exists
   block:
@@ -33,10 +38,7 @@
         group: github
         remote_src: yes
 
-    - name: Install libicu dependency package
-      ansible.builtin.dnf:
-        name: libicu
-        state: installed
+
 
     - name: Configure GitHub runner (as root so dependencies work)
       ansible.builtin.shell: ./config.sh --url https://github.com/testVinaycicd --token "{{ lookup('community.hashi_vault.hashi_vault', 'secret=infra/data/ssh:RUNNER_TOKEN token={{ vault_token }} url=http://vault.mikeydevops1.online:8200/') }}" --unattended
