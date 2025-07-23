@@ -26,7 +26,7 @@ variable "tools" {
     }
     github-runner = {
       instance_type = "t3.small"
-      root_block_device = 30
+      root_block_device = 35
       port = 443 #dummy port
       iam_policy = {
         Action = ["*"]
