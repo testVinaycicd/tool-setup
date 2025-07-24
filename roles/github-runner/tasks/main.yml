@@ -120,3 +120,12 @@
   ansible.builtin.dnf:
     name: maven
     state: installed
+
+- name: Install Argocd
+  ansible.builtin.shell: |
+    curl -sSL -o argocd-linux-amd64 https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
+    sudo install -m 555 argocd-linux-amd64 /usr/local/bin/argocd
+    rm argocd-linux-amd64
+
+#- name: Install Trivy
+#  ansible.builtin.shell: curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /bin v0.62.1
